@@ -59,7 +59,9 @@ public class DownloadingThread implements Runnable {
                     break;
 
                 downloaded+=read;
-                partDownloadListener.update(downloaded,0);
+                partDownloadListener.update(downloaded,partNo);
+
+               // System.out.println(downloaded+" PART No"+partNo);
 
             }
 

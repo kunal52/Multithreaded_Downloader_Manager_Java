@@ -2,9 +2,9 @@ package com.techweblearn;
 
 public interface PartDownloadListener {
 
-    void update(long downloaded,int speed);
+    void update(long downloaded,int partNo);
     void completed();
-    void error();
+    void error(int partNo);
 
 
 }

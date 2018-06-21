@@ -5,7 +5,7 @@ public class DownloadTask {
     String url;
     private long startRange;
     private long endRange;
-    String filename;
+    private String filename;
     String savePath;
 
     public String getFilename() {

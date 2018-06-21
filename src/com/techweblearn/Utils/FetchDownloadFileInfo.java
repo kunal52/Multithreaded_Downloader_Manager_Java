@@ -12,13 +12,12 @@ import java.util.Map;
 public class FetchDownloadFileInfo {
 
     private static FileDownloadInfo fileDownloadInfo;
-    public static final String CONTENT_DISPOSITION="Content-Disposition";
-    public static final String ACCEPT_RANGES="Accept-Ranges";
-    public static final String CONTENT_LENGTH="Content-Length";
-    public static final String CONTENT_TYPE="Content-Type";
-    public static final String SHA1="X-Checksum-SHA1";
-    public static final String MD5="X-Checksum-MD5";
-
+    private static final String CONTENT_DISPOSITION="Content-Disposition";
+    private static final String ACCEPT_RANGES="Accept-Ranges";
+    private static final String CONTENT_LENGTH="Content-Length";
+    private static final String CONTENT_TYPE="Content-Type";
+    private static final String SHA1="X-Checksum-SHA1";
+    private static final String MD5="X-Checksum-MD5";
 
     private static String URL;
 
@@ -28,12 +27,10 @@ public class FetchDownloadFileInfo {
         fileDownloadInfo=new FileDownloadInfo();
         fileDownloadInfo.setUrl(url);
 
-
         try {
             URL url1=new URL(url);
             HttpURLConnection httpURLConnection= (HttpURLConnection) url1.openConnection();
             httpURLConnection.connect();
-
             Map<String,List<String>> headers=httpURLConnection.getHeaderFields();
             System.out.println(headers.toString());
             fileName(httpURLConnection.getHeaderField(CONTENT_DISPOSITION));
@@ -43,7 +40,6 @@ public class FetchDownloadFileInfo {
             checkSumSHA1(httpURLConnection.getHeaderField(SHA1));
             checkSumMD5(httpURLConnection.getHeaderField(MD5));
 
-            System.out.println(fileDownloadInfo.toString());
             return fileDownloadInfo;
 
         } catch (IOException e) {
@@ -61,12 +57,17 @@ public class FetchDownloadFileInfo {
                 URL=URL.substring(0,URL.length()-1);
             }
 
+            if(URL.lastIndexOf("?")>URL.lastIndexOf("/"))
+            {
+                fileDownloadInfo.setFileName(URL.substring(URL.lastIndexOf("/")+1,URL.lastIndexOf("?")));
+            }
+            else
             fileDownloadInfo.setFileName(URL.substring(URL.lastIndexOf("/")+1,URL.length()));
         }
         else
         {
 
-            fileDownloadInfo.setFileName(content_disposition.substring(content_disposition.lastIndexOf("=")+2,content_disposition.length()-1));
+            fileDownloadInfo.setFileName(content_disposition.substring(content_disposition.lastIndexOf("=")+1,content_disposition.length()).trim());
         }
         System.out.println(fileDownloadInfo.getFileName());
     }

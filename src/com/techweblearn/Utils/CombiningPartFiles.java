@@ -46,7 +46,6 @@ public class CombiningPartFiles {
                 Path inFile=Paths.get(downloadTasks[i].getFilename());
                 try ( FileChannel inFileChannel=FileChannel.open(inFile,READ)){
 
-                    read=0;
                     while (true)
                     {
                         byteBuffer.clear();
@@ -55,9 +54,7 @@ public class CombiningPartFiles {
                         outChannel.write(byteBuffer);
                         if(read==-1)
                             break;
-
                          total_read+=read;
-                         System.out.println("TOTAL READ"+total_read);
 
                     }
 

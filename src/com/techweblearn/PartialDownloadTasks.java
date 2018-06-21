@@ -1,5 +1,7 @@
 package com.techweblearn;
 
+import java.util.ArrayList;
+
 public class PartialDownloadTasks {
 
 
@@ -24,7 +26,7 @@ public class PartialDownloadTasks {
             downloadTask.setEndRange(end);
             downloadTask.setStartRange(start);
             downloadTask.setUrl(fileDownloadInfo.getUrl());
-            downloadTask.setFilename(i+"000_"+fileDownloadInfo.getFileName());
+            downloadTask.setFilename(fileDownloadInfo.getFileName()+"PART_00"+i);
             downloadTasks[i]=downloadTask;
         }
 
@@ -34,6 +36,30 @@ public class PartialDownloadTasks {
 
         return downloadTasks;
 
+    }
+
+    public DownloadTask[]getResumePartialDownloadTasks(ArrayList<Long>downloadedPartsInfo,FileDownloadInfo fileDownloadInfo,int noOfThreads)
+    {
+        end=fileDownloadInfo.getContent_length()-1;
+        DownloadTask[]downloadTasks=new DownloadTask[noOfThreads];
+        sizeOfOnePart=fileDownloadInfo.getContent_length()/noOfThreads;
+        start=-1;
+        end=-1;
+
+        for (int i=0;i<noOfThreads;i++)
+        {
+            start=end+1;
+            end=start+sizeOfOnePart-1;
+
+            DownloadTask downloadTask=new DownloadTask();
+            downloadTask.setEndRange(end);
+            downloadTask.setStartRange(start);
+            downloadTask.setUrl(fileDownloadInfo.getUrl());
+            downloadTask.setFilename(fileDownloadInfo.getFileName()+"PART_00"+i);
+            downloadTasks[i]=downloadTask;
+        }
+
+        return downloadTasks;
     }
 
 }
