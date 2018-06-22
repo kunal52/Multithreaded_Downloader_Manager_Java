@@ -44,6 +44,8 @@ public class DownloadingThread implements Runnable {
             URL url=new URL(downloadTask.url);
             HttpURLConnection httpURLConnection= (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("Range",downloadTask.getRange());
+            httpURLConnection.connect();
+            System.out.println(httpURLConnection.getHeaderFields().toString());
             byteBuffer=ByteBuffer.allocate(BUFFER_SIZE);
             ReadableByteChannel readableByteChannel=Channels.newChannel(httpURLConnection.getInputStream());
             FileOutputStream fileOutputStream=new FileOutputStream(new File(downloadTask.getFilename()));

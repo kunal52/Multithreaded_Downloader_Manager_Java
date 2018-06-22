@@ -9,6 +9,22 @@ public class Main {
 
         String URL_FILE = "http://h2vx.com/vcf/https%3A//www.nottingham.ac.uk/biosciences/people/michael.pound";
         Downloader downloader = new Downloader(URL_FILE,8);
+        downloader.setDownloadStatusListener(new DownloadListener() {
+            @Override
+            public void update(long downloaded, int speed) {
+                System.out.println(downloaded+"  "+speed);
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Completed");
+            }
+
+            @Override
+            public void onPause() {
+
+            }
+        });
         downloader.startDownload();
 
 
