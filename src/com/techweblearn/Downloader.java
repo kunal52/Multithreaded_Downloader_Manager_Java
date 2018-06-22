@@ -21,9 +21,8 @@ public class Downloader
     private long secDownloaded;
     private ScheduledExecutorService scheduledExecutorService;
     private DownloadListener downloadListener=null;
-    String url;
+    private String url;
 
-    ArrayList<Long>partDownloadedInfo=new ArrayList<>();
 
     public Downloader(String url,int noOfThreads) {
         this.noOfThreads = noOfThreads;
@@ -52,6 +51,8 @@ public class Downloader
     public void startDownload()
     {
         downloadFile(FetchDownloadFileInfo.getUrlFileInfo(url),noOfThreads);
+
+        System.out.println(fileDownloadInfo.toString());
         ExecutorService executorService=Executors.newFixedThreadPool(noOfThreads);
         PartDownload partDownload=new PartDownload(downloadListener);
 
@@ -97,7 +98,7 @@ public class Downloader
         @Override
         public void update(long downloaded,int partNo) {
             Downloader.this.downloaded+=8192;
-            partDownloadedInfo.add(partNo,downloaded);
+
         }
 
         @Override
