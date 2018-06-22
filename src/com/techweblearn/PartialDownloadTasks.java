@@ -38,7 +38,7 @@ public class PartialDownloadTasks {
 
     }
 
-    public DownloadTask[]getResumePartialDownloadTasks(ArrayList<Long>downloadedPartsInfo,FileDownloadInfo fileDownloadInfo,int noOfThreads)
+    public static DownloadTask[]getResumePartialDownloadTasks(ArrayList<Long>downloadedPartsInfo,FileDownloadInfo fileDownloadInfo,int noOfThreads)
     {
         end=fileDownloadInfo.getContent_length()-1;
         DownloadTask[]downloadTasks=new DownloadTask[noOfThreads];
@@ -53,9 +53,10 @@ public class PartialDownloadTasks {
 
             DownloadTask downloadTask=new DownloadTask();
             downloadTask.setEndRange(end);
-            downloadTask.setStartRange(start);
+            downloadTask.setStartRange(start+downloadedPartsInfo.get(i));
             downloadTask.setUrl(fileDownloadInfo.getUrl());
             downloadTask.setFilename(fileDownloadInfo.getFileName()+"PART_00"+i);
+            downloadTask.setDownloaded(downloadedPartsInfo.get(i));
             downloadTasks[i]=downloadTask;
         }
 

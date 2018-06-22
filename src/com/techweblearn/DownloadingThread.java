@@ -24,6 +24,7 @@ public class DownloadingThread implements Runnable {
     private ReadableByteChannel readableByteChannel;
     private WritableByteChannel writableByteChannel;
     private FileOutputStream fileOutputStream;
+    int responseCode;
 
 
 
@@ -54,6 +55,7 @@ public class DownloadingThread implements Runnable {
             httpURLConnection.addRequestProperty("Range",downloadTask.getRange());
             httpURLConnection.setConnectTimeout(30000);
             httpURLConnection.connect();
+            responseCode=httpURLConnection.getResponseCode();
             System.out.println(httpURLConnection.getHeaderFields().toString());
             byteBuffer=ByteBuffer.allocate(BUFFER_SIZE);
             readableByteChannel=Channels.newChannel(httpURLConnection.getInputStream());
@@ -89,7 +91,7 @@ public class DownloadingThread implements Runnable {
 
             if(pause)
             partDownloadListener.pause(partNo,downloaded);
-            else partDownloadListener.completed();
+            else partDownloadListener.completed(partNo);
 
         }
         catch (ClosedChannelException pause)
@@ -104,6 +106,7 @@ public class DownloadingThread implements Runnable {
 
         }catch (IOException e) {
             e.printStackTrace();
+            partDownloadListener.error(responseCode,e.getLocalizedMessage(),partNo);
 
         }
 

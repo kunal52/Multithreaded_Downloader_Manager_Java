@@ -5,10 +5,7 @@ import com.techweblearn.Utils.DeleteFiles;
 import com.techweblearn.Utils.FetchDownloadFileInfo;
 
 import java.io.File;
-import java.time.Period;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,6 +26,9 @@ public class Downloader
     private ArrayList<Long>partsDownloadInfo=new ArrayList<>();
     private ArrayList<DownloadingThread>downloadingThreadArrayList=new ArrayList<>();
     private ExecutorService executorService;
+    private PartDownloadListener partDownloadListener;
+    private int totalError;
+
 
 
     public Downloader(String url,int noOfThreads) {
@@ -64,12 +64,12 @@ public class Downloader
 
 
         executorService=Executors.newFixedThreadPool(noOfThreads);
-        PartDownload partDownload=new PartDownload(downloadListener);
+         partDownloadListener=new PartDownload(downloadListener);
 
 
         for(int i=0;i<noOfThreads;i++) {
 
-            DownloadingThread downloadingThread=new DownloadingThread(downloadTasks[i],i,partDownload);
+            DownloadingThread downloadingThread=new DownloadingThread(downloadTasks[i],i,partDownloadListener);
             downloadingThreadArrayList.add(i,downloadingThread);
             executorService.submit(downloadingThread);
         }
@@ -109,13 +109,15 @@ public class Downloader
         @Override
         public void update(long downloaded,int partNo) {
             Downloader.this.downloaded+=8192;
+            downloadListener.onPartStatus(downloaded,partNo);
 
         }
 
         @Override
-        public void completed() {
+        public void completed(int partNo) {
             System.out.println("Part Completed");
             parts_Completed++;
+            downloadListener.onPartCompleted(partNo);
             if(parts_Completed==noOfThreads)
             {
                 if(downloadListener!=null)
@@ -158,6 +160,7 @@ public class Downloader
                 System.out.println("All Paused");
                 downloadListener.onPause(partsDownloadInfo);
                 executorService.shutdownNow();
+
             }
 
 
@@ -169,6 +172,14 @@ public class Downloader
         @Override
         public void error(int code, String message, int partno) {
 
+            totalError++;
+            if(totalError==noOfThreads) {
+                downloadListener.onError(message);
+
+            }
+
+            downloadListener.onPartError(code, message, partno);
+
         }
     }
 
@@ -176,7 +187,7 @@ public class Downloader
     public void pause()
     {
 
-System.out.println(downloadingThreadArrayList.size()+"  SIZE");
+        System.out.println(downloadingThreadArrayList.size()+"  SIZE");
 
         for(DownloadingThread downloadingThread:downloadingThreadArrayList)
         {
@@ -187,13 +198,25 @@ System.out.println(downloadingThreadArrayList.size()+"  SIZE");
 
     public void resume()
     {
-        //TODO Again Create Downloaded Tasks . And Send Request to Server Specifies the Ranges Need to Be Download And Start Downloading
+        downloadingThreadArrayList.clear();
+        executorService=Executors.newFixedThreadPool(noOfThreads);
+        downloadTasks=PartialDownloadTasks.getResumePartialDownloadTasks(partsDownloadInfo,fileDownloadInfo,noOfThreads);
+        for (int i=0;i<noOfThreads;i++)
+        {
+            DownloadingThread downloadingThread=new DownloadingThread(downloadTasks[i],i,partDownloadListener);
+            downloadingThreadArrayList.add(i,downloadingThread);
+            executorService.submit(downloadingThread);
+        }
+        executorService.shutdown();
+
     }
 
     public void  stop()
     {
+        executorService.shutdownNow();
         scheduledExecutorService.shutdownNow();
         DeleteFiles.delete(downloadTasks);
+
     }
 
     public void restart()

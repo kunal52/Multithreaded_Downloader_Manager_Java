@@ -7,6 +7,7 @@ public class DownloadTask {
     private long endRange;
     private String filename;
     String savePath;
+    long downloaded=0;
 
     public String getFilename() {
         return filename;
@@ -42,5 +43,21 @@ public class DownloadTask {
 
     public void setEndRange(long endRange) {
         this.endRange = endRange;
+    }
+
+    public String getSavePath() {
+        return savePath;
+    }
+
+    public void setSavePath(String savePath) {
+        this.savePath = savePath;
+    }
+
+    public long getDownloaded() {
+        return downloaded;
+    }
+
+    public void setDownloaded(long downloaded) {
+        this.downloaded = downloaded;
     }
 }
