@@ -13,7 +13,7 @@ How to Use -:
             @Override
             public void update(long downloaded, int speed) {
 
-               
+        
             }
 
             @Override
@@ -33,7 +33,7 @@ How to Use -:
 
             @Override
             public void onError(String message) {
-                System.out.println(message);
+    
             }
 
 
