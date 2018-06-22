@@ -5,7 +5,10 @@ import com.techweblearn.Utils.DeleteFiles;
 import com.techweblearn.Utils.FetchDownloadFileInfo;
 
 import java.io.File;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,6 +25,10 @@ public class Downloader
     private ScheduledExecutorService scheduledExecutorService;
     private DownloadListener downloadListener=null;
     private String url;
+    private int partPaused=0;
+    private ArrayList<Long>partsDownloadInfo=new ArrayList<>();
+    private ArrayList<DownloadingThread>downloadingThreadArrayList=new ArrayList<>();
+    private ExecutorService executorService;
 
 
     public Downloader(String url,int noOfThreads) {
@@ -52,14 +59,18 @@ public class Downloader
     {
         downloadFile(FetchDownloadFileInfo.getUrlFileInfo(url),noOfThreads);
 
-        System.out.println(fileDownloadInfo.toString());
-        ExecutorService executorService=Executors.newFixedThreadPool(noOfThreads);
+        if(!fileDownloadInfo.isPartialSupported())
+            this.noOfThreads=1;
+
+
+        executorService=Executors.newFixedThreadPool(noOfThreads);
         PartDownload partDownload=new PartDownload(downloadListener);
 
 
         for(int i=0;i<noOfThreads;i++) {
 
             DownloadingThread downloadingThread=new DownloadingThread(downloadTasks[i],i,partDownload);
+            downloadingThreadArrayList.add(i,downloadingThread);
             executorService.submit(downloadingThread);
         }
         executorService.shutdown();
@@ -135,12 +146,43 @@ public class Downloader
 
 
         }
+
+        @Override
+        public void pause(int partNo, long downloaded) {
+
+            System.out.println(partNo);
+            partPaused++;
+            partsDownloadInfo.add(partNo,downloaded);
+            if(partPaused==noOfThreads)
+            {
+                System.out.println("All Paused");
+                downloadListener.onPause(partsDownloadInfo);
+                executorService.shutdownNow();
+            }
+
+
+
+
+
+        }
+
+        @Override
+        public void error(int code, String message, int partno) {
+
+        }
     }
 
 
     public void pause()
     {
-        scheduledExecutorService.shutdownNow();
+
+System.out.println(downloadingThreadArrayList.size()+"  SIZE");
+
+        for(DownloadingThread downloadingThread:downloadingThreadArrayList)
+        {
+            downloadingThread.pause();
+        }
+
     }
 
     public void resume()
