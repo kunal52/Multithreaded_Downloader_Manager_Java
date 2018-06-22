@@ -13,8 +13,7 @@ How to Use -:
             @Override
             public void update(long downloaded, int speed) {
 
-                System.out.println(downloaded/1024+" "+speed/1024);
-
+               
             }
 
             @Override
@@ -24,7 +23,7 @@ How to Use -:
 
             @Override
             public void onPause(ArrayList<Long> downloaded) {
-                System.out.println(downloaded);
+             
             }
 
             @Override
