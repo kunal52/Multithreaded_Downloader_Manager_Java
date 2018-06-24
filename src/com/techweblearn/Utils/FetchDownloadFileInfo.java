@@ -74,7 +74,7 @@ public class FetchDownloadFileInfo {
 
     private static boolean isPartialOrResumeSupported(String accept_ranges)
     {
-        if(accept_ranges.equals("none"))
+        if(accept_ranges==null||accept_ranges.equals("none"))
         {
             return false;
         }else return true;
