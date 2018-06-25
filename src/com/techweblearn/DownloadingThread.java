@@ -1,8 +1,6 @@
 package com.techweblearn;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,13 +22,16 @@ public class DownloadingThread implements Runnable {
     private ReadableByteChannel readableByteChannel;
     private WritableByteChannel writableByteChannel;
     private FileOutputStream fileOutputStream;
-    int responseCode;
+    private int responseCode;
+    private BufferedInputStream bufferedInputStream;
+    private BufferedOutputStream bufferedOutputStream;
 
 
 
     private DownloadTask downloadTask;
     private int partNo;
     private PartDownloadListener partDownloadListener;
+    private byte[]buffer=new byte[8192];
 
     public DownloadingThread(DownloadTask downloadTask, PartDownloadListener partDownloadListener) {
         this.downloadTask = downloadTask;
@@ -58,24 +59,32 @@ public class DownloadingThread implements Runnable {
             httpURLConnection.connect();
             responseCode=httpURLConnection.getResponseCode();
             System.out.println(httpURLConnection.getHeaderFields().toString());
-            byteBuffer=ByteBuffer.allocate(BUFFER_SIZE);
-            readableByteChannel=Channels.newChannel(httpURLConnection.getInputStream());
             fileOutputStream=new FileOutputStream(new File(downloadTask.getFilename()),true);
-            writableByteChannel=fileOutputStream.getChannel();
+
+            bufferedInputStream=new BufferedInputStream(httpURLConnection.getInputStream());
+            bufferedOutputStream=new BufferedOutputStream(fileOutputStream);
+
+            int read;
+
+          //  readableByteChannel=Channels.newChannel(httpURLConnection.getInputStream());
+
+            //writableByteChannel=fileOutputStream.getChannel();
 
             while (true)
             {
-                byteBuffer.clear();
+               // byteBuffer.clear();
                /* if(pause)
                 {
                     break;
                 }*/
 
-                int read=readableByteChannel.read(byteBuffer);
-                byteBuffer.flip();
-                writableByteChannel.write(byteBuffer);
+                read=bufferedInputStream.read(buffer);
+
+                bufferedOutputStream.write(buffer);
                 if(read==-1)
                     break;
+
+                System.out.println(read);
 
                 downloaded+=read;
                 if(partDownloadListener!=null)
@@ -85,6 +94,8 @@ public class DownloadingThread implements Runnable {
 
 
 
+            bufferedOutputStream.close();
+            bufferedInputStream.close();
             byteBuffer.clear();
             fileOutputStream.close();
             writableByteChannel.close();

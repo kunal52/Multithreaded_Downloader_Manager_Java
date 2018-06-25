@@ -13,7 +13,7 @@ public class Main {
         Downloader downloader = new Downloader();
 
         downloader.startDownload();
-        downloader.addDownloadURL(URL_FILE);
+      //  downloader.addDownloadURL(URL_FILE);
         downloader.addDownloadURL(URL_2);
 
 

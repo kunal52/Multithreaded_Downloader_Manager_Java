@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class FetchDownloadFileInfo {
 
+
     private static FileDownloadInfo fileDownloadInfo;
     private static final String CONTENT_DISPOSITION="Content-Disposition";
     private static final String ACCEPT_RANGES="Accept-Ranges";
@@ -18,7 +19,6 @@ public class FetchDownloadFileInfo {
     private static final String CONTENT_TYPE="Content-Type";
     private static final String SHA1="X-Checksum-SHA1";
     private static final String MD5="X-Checksum-MD5";
-
     private static String URL;
 
     public static FileDownloadInfo getUrlFileInfo(String url)
