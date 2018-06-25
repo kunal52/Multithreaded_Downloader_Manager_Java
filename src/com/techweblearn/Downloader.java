@@ -1,8 +1,7 @@
 package com.techweblearn;
 
-import com.techweblearn.Utils.CombiningPartFiles;
+import com.techweblearn.Utils.CombiningPartFilesThread;
 import com.techweblearn.Utils.DeleteFiles;
-import com.techweblearn.Utils.FetchDownloadFileInfo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,30 +30,22 @@ public class Downloader
     private BlockingQueue<Runnable>threadQueue;
     private List<Future> runningThreadsTask;
     private ExecutorThread executorThread;
+    private FileDownload fileDownload;
 
 
     public Downloader() {
         executorThread=new ExecutorThread();
         runningThreadsTask=new ArrayList<>();
         threadQueue=new LinkedBlockingQueue<>();
-        executorService=new ThreadPoolExecutor(NO_OF_THREADS,NO_OF_THREADS*4,60,TimeUnit.SECONDS,threadQueue);
+        executorService=new ThreadPoolExecutor(NO_OF_THREADS,NO_OF_THREADS*4,60,TimeUnit.SECONDS,threadQueue,new ExecutorThreadFactory());
+        fileDownload=new FileDownload();
     }
 
-    private void downloadFile(FileDownloadInfo fileDownloadInfo,int noOfThreads)
-    {
-
-        this.fileDownloadInfo=fileDownloadInfo;
-        System.out.println(fileDownloadInfo.toString());
-        this.noOfThreads=noOfThreads;
-        this.downloadTasks=PartialDownloadTasks.getPartialDownloadTasks(fileDownloadInfo,noOfThreads);
-
-    }
 
     public void setDownloadStatusListener(DownloadListener downloadStatusListener)
     {
         this.downloadListener=downloadStatusListener;
     }
-
 
 
     public void startDownload()
@@ -75,95 +66,15 @@ public class Downloader
 
         @Override
         public void run() {
-            downloadListener.update(downloaded, (int) (downloaded-secDownloaded));
+          //  downloadListener.update(downloaded, (int) (downloaded-secDownloaded));
             secDownloaded=downloaded;
         }
     }
 
 
-    private class PartDownload implements PartDownloadListener{
-
-        DownloadListener downloadListener;
-
-        PartDownload(DownloadListener downloadListener) {
-            this.downloadListener = downloadListener;
-        }
-
-        @Override
-        public void update(long downloaded,int partNo) {
-            Downloader.this.downloaded+=8192;
-            System.out.println(downloaded+"  "+partNo);
-            downloadListener.onPartStatus(downloaded,partNo);
-
-        }
-
-        @Override
-        public void completed(int partNo) {
-            System.out.println("Part Completed");
-            parts_Completed++;
-            downloadListener.onPartCompleted(partNo);
-            if(parts_Completed==noOfThreads)
-            {
-                if(downloadListener!=null)
-                downloadListener.onCompleted();
-                scheduledExecutorService.shutdownNow();
-                executorService.submit(new CombiningPartFiles(new File(fileDownloadInfo.getFileName()), downloadTasks, new CombiningFileListener() {
-                    @Override
-                    public void combineCompleted() {
-
-                    }
-
-                    @Override
-                    public void combineProgress(long combining) {
-
-                    }
-
-                    @Override
-                    public void combineError() {
-
-                    }
-                }));
-            }
-        }
-
-        @Override
-        public void error(int partNo) {
 
 
-
-        }
-
-        @Override
-        public void pause(int partNo, long downloaded) {
-
-            System.out.println(partNo);
-            partPaused++;
-            partsDownloadInfo.add(partNo,downloaded);
-            if(partPaused==noOfThreads)
-            {
-                System.out.println("All Paused");
-                downloadListener.onPause(partsDownloadInfo);
-                executorService.shutdownNow();
-            }
-
-        }
-
-        @Override
-        public void error(int code, String message, int partno) {
-
-            totalError++;
-            if(totalError==noOfThreads) {
-                downloadListener.onError(message);
-
-            }
-
-            downloadListener.onPartError(code, message, partno);
-
-        }
-    }
-
-
-    public void pause()
+    public void pause(int downloadingIndex)
     {
 
         System.out.println(downloadingThreadArrayList.size()+"  SIZE");
@@ -177,10 +88,9 @@ public class Downloader
 
     public void addDownloadURL(String url)
     {
-        DownloadFile downloadFile=new DownloadFile(executorThread);
+        DownloadFile downloadFile=new DownloadFile(executorThread,fileDownload);
         addDownload(downloadFile.createFileDownloadingThread(url));
     }
-
 
     public void addDownload(ArrayList<DownloadingThread>downloadingThreads)
     {
@@ -218,6 +128,65 @@ public class Downloader
 
 
 
+    }
+
+    private class FileDownload implements FileDownloadListener
+    {
+
+
+        @Override
+        public void progress(DownloadingStatus downloadingStatus) {
+
+        }
+
+        @Override
+        public void onCompleted() {
+
+
+
+        }
+
+        @Override
+        public void onPause(ArrayList<Long> downloaded) {
+
+
+
+        }
+
+        @Override
+        public void onPartError(int code, String message, int partNo) {
+
+
+
+        }
+
+        @Override
+        public void onError(String message) {
+
+
+
+        }
+
+        @Override
+        public void onPartStatus(long downloaded, int partNo) {
+
+
+
+        }
+
+        @Override
+        public void onPartCompleted(int partNo) {
+
+
+
+        }
+
+        @Override
+        public void combineFiles(CombiningPartFilesThread combiningPartFilesThread) {
+
+
+
+        }
     }
 
 

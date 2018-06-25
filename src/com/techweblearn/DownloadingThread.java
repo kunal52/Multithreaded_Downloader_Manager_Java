@@ -51,9 +51,10 @@ public class DownloadingThread implements Runnable {
 
         try {
             URL url=new URL(downloadTask.url);
-             httpURLConnection= (HttpURLConnection) url.openConnection();
+            httpURLConnection= (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("Range",downloadTask.getRange());
-            httpURLConnection.setConnectTimeout(30000);
+            httpURLConnection.setConnectTimeout(60000);
+            httpURLConnection.setReadTimeout(60000);
             httpURLConnection.connect();
             responseCode=httpURLConnection.getResponseCode();
             System.out.println(httpURLConnection.getHeaderFields().toString());
@@ -97,6 +98,7 @@ public class DownloadingThread implements Runnable {
         }
         catch (ClosedChannelException pause)
         {
+
             partDownloadListener.pause(partNo,downloaded);
             pause.printStackTrace();
         }
