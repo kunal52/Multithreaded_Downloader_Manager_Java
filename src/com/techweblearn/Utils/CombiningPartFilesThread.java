@@ -5,6 +5,8 @@ import com.techweblearn.DownloadListener;
 import com.techweblearn.DownloadTask;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -34,7 +36,6 @@ public class CombiningPartFilesThread implements Runnable {
     @Override
     public void run() {
         int read;
-        int total_read = 0;
 
         if(!output.exists())
         {
@@ -45,25 +46,21 @@ public class CombiningPartFilesThread implements Runnable {
             }
         }
 
-        ByteBuffer byteBuffer=ByteBuffer.allocate(8192);
-        Path outFile=Paths.get(output.toURI());
+        byte[]byteBuffer=new byte[8192];
 
-        try(FileChannel outChannel=FileChannel.open(outFile,WRITE,APPEND,CREATE)) {
+
+
+        try(FileOutputStream fileOutputStream=new FileOutputStream(output)) {
 
             System.out.println("Combining Files");
             for (DownloadTask downloadTask : downloadTasks) {
 
-                Path inFile = Paths.get(downloadTask.getFilename());
-                try (FileChannel inFileChannel = FileChannel.open(inFile, READ,WRITE)) {
+                File file= new File(downloadTask.getFilename());
+                try (FileInputStream fileInputStream = new FileInputStream(file)) {
 
-                    while (true) {
-                        byteBuffer.clear();
-                        read = inFileChannel.read(byteBuffer);
-                        byteBuffer.flip();
-                        outChannel.write(byteBuffer);
-                        if (read == -1)
-                            break;
-                        total_read += read;
+                    while ((read=fileInputStream.read(byteBuffer))!=-1) {
+
+                        fileOutputStream.write(byteBuffer,0,read);
 
                     }
 
