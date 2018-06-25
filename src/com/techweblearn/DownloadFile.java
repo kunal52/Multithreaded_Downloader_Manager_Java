@@ -42,7 +42,7 @@ public class DownloadFile {
 
         @Override
         public void update(long downloaded, int partNo) {
-            fileDownloadListener.update(downloaded, partNo);
+           // fileDownloadListener.update(downloaded, partNo);
         }
 
         @Override
@@ -50,15 +50,34 @@ public class DownloadFile {
             completedParts++;
 
             System.out.println("Completed " + partNo);
-            fileDownloadListener.onPartCompleted(partNo);
+          //  fileDownloadListener.onPartCompleted(partNo);
 
             if(completedParts==no_of_threads)
             {
-                if(fileDownloadListener!=null)
-                    fileDownloadListener.onCompleted();
+                executorThreadListener.combineFiles(new CombiningPartFiles(new File(fileDownloadInfo.getFileName()), partialDownloadTasks, new CombiningFileListener() {
+                    @Override
+                    public void combineCompleted() {
+
+
+
+                    }
+
+                    @Override
+                    public void combineProgress(long combining) {
+
+
+
+                    }
+
+                    @Override
+                    public void combineError() {
+
+
+
+                    }
+                }));
 
                 System.out.println("Full Completed");
-
 
             }
 

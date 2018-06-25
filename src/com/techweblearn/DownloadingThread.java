@@ -77,6 +77,7 @@ public class DownloadingThread implements Runnable {
                     break;
 
                 downloaded+=read;
+                if(partDownloadListener!=null)
                 partDownloadListener.update(downloaded,partNo);
 
             }

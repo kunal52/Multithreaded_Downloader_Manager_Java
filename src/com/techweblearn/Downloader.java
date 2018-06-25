@@ -6,13 +6,13 @@ import com.techweblearn.Utils.FetchDownloadFileInfo;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class Downloader
 {
+
+    private static final int NO_OF_THREADS=4;
     private FileDownloadInfo fileDownloadInfo;
     private int noOfThreads;
     private int parts_Completed;
@@ -28,14 +28,16 @@ public class Downloader
     private ExecutorService executorService;
     private PartDownloadListener partDownloadListener;
     private int totalError;
+    private BlockingQueue<Runnable>threadQueue;
+    private List<Future> runningThreadsTask;
+    private ExecutorThread executorThread;
 
 
-
-    public Downloader(String url,int noOfThreads) {
-        this.noOfThreads = noOfThreads;
-        this.url=url;
-
-
+    public Downloader() {
+        executorThread=new ExecutorThread();
+        runningThreadsTask=new ArrayList<>();
+        threadQueue=new LinkedBlockingQueue<>();
+        executorService=new ThreadPoolExecutor(NO_OF_THREADS,NO_OF_THREADS*4,60,TimeUnit.SECONDS,threadQueue);
     }
 
     private void downloadFile(FileDownloadInfo fileDownloadInfo,int noOfThreads)
@@ -57,25 +59,6 @@ public class Downloader
 
     public void startDownload()
     {
-        downloadFile(FetchDownloadFileInfo.getUrlFileInfo(url),noOfThreads);
-
-        if(!fileDownloadInfo.isPartialSupported())
-            this.noOfThreads=1;
-
-
-        executorService=Executors.newFixedThreadPool(noOfThreads);
-         partDownloadListener=new PartDownload(downloadListener);
-
-
-        for(int i=0;i<noOfThreads;i++) {
-
-            DownloadingThread downloadingThread=new DownloadingThread(downloadTasks[i],i,partDownloadListener);
-            downloadingThreadArrayList.add(i,downloadingThread);
-            executorService.submit(downloadingThread);
-        }
-      //  executorService.shutdown();
-
-
         scheduledExecutorService=Executors.newScheduledThreadPool(1);
         scheduledExecutorService.scheduleAtFixedRate(new UpdateDownloadInfoSec(downloadListener), 0, 1, TimeUnit.SECONDS);
     }
@@ -161,12 +144,7 @@ public class Downloader
                 System.out.println("All Paused");
                 downloadListener.onPause(partsDownloadInfo);
                 executorService.shutdownNow();
-
             }
-
-
-
-
 
         }
 
@@ -195,6 +173,21 @@ public class Downloader
             downloadingThread.pause();
         }
 
+    }
+
+    public void addDownloadURL(String url)
+    {
+        DownloadFile downloadFile=new DownloadFile(executorThread);
+        addDownload(downloadFile.createFileDownloadingThread(url));
+    }
+
+
+    public void addDownload(ArrayList<DownloadingThread>downloadingThreads)
+    {
+        for(DownloadingThread downloadingThread:downloadingThreads)
+        {
+            executorService.submit(downloadingThread);
+        }
     }
 
     public void resume()
@@ -227,6 +220,16 @@ public class Downloader
 
     }
 
+
+    private class ExecutorThread implements ExecutorThreadListener
+    {
+
+        @Override
+        public void combineFiles(Runnable runnable) {
+            System.out.println("Combining Filesssssssssssssssssssssss");
+            runningThreadsTask.add(executorService.submit(runnable));
+        }
+    }
 
 
 
