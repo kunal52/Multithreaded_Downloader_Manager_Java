@@ -1,10 +1,14 @@
 package com.techweblearn;
 
-import com.techweblearn.Utils.CombiningPartFiles;
+import com.techweblearn.Utils.CombiningPartFilesThread;
 import com.techweblearn.Utils.FetchDownloadFileInfo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class DownloadFile {
 
@@ -14,9 +18,13 @@ public class DownloadFile {
     private FileDownloadInfo fileDownloadInfo;
     private DownloadTask[]partialDownloadTasks;
     private ExecutorThreadListener executorThreadListener;
+    private ScheduledExecutorService executorService;
+    private DownloadingStatus downloadingStatus;
 
-    public DownloadFile(ExecutorThreadListener executorThreadListener) {
+    public DownloadFile(ExecutorThreadListener executorThreadListener,FileDownloadListener fileDownloadListener) {
         this.executorThreadListener=executorThreadListener;
+        this.fileDownloadListener=fileDownloadListener;
+        downloadingStatus=new DownloadingStatus();
     }
 
     private ArrayList<DownloadingThread>downloadingThreads;
@@ -33,6 +41,8 @@ public class DownloadFile {
             downloadingThreads.add(new DownloadingThread(partialDownloadTasks[i],threadDownloadListener));
         }
 
+        executorService=Executors.newScheduledThreadPool(1);
+        executorService.scheduleAtFixedRate(new ToMainDownload(),0,1,TimeUnit.SECONDS);
         return downloadingThreads;
 
     }
@@ -40,25 +50,30 @@ public class DownloadFile {
     private class ThreadDownloadListener implements PartDownloadListener
     {
 
+
         @Override
         public void update(long downloaded, int partNo) {
-           // fileDownloadListener.update(downloaded, partNo);
+
+            downloadingStatus.incrementDownload();
+
         }
 
         @Override
         public void completed(int partNo) {
+
             completedParts++;
 
             System.out.println("Completed " + partNo);
-          //  fileDownloadListener.onPartCompleted(partNo);
+            fileDownloadListener.onPartCompleted(partNo);
 
             if(completedParts==no_of_threads)
             {
-                executorThreadListener.combineFiles(new CombiningPartFiles(new File(fileDownloadInfo.getFileName()), partialDownloadTasks, new CombiningFileListener() {
+                executorThreadListener.combineFiles(new CombiningPartFilesThread(new File(fileDownloadInfo.getFileName()), partialDownloadTasks, new CombiningFileListener() {
                     @Override
                     public void combineCompleted() {
 
 
+                        fileDownloadListener.onCompleted();
 
                     }
 
@@ -85,10 +100,13 @@ public class DownloadFile {
 
         @Override
         public void error(int partNo) {
+
+
         }
 
         @Override
         public void pause(int partNo, long downloaded) {
+
 
         }
 
@@ -98,6 +116,16 @@ public class DownloadFile {
         }
     }
 
+
+
+    private class ToMainDownload implements Runnable
+    {
+
+        @Override
+        public void run() {
+            fileDownloadListener.progress(downloadingStatus);
+        }
+    }
 
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2854b913-edad-441f-aa4d-0ac4264a5375" name="Default" comment="">
+    <list default="true" id="2854b913-edad-441f-aa4d-0ac4264a5375" name="Default" comment="Adding Multiple File Downloads">
       <change afterPath="$PROJECT_DIR$/src/com/techweblearn/ExecutorThreadFactory.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/com/techweblearn/ThreadType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -20,11 +20,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="DownloadFile.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DownloadFile.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/techweblearn/DownloadFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="63" selection-start-line="63" selection-end-line="63" />
+            <state relative-caret-position="53">
+              <caret line="25" column="55" lean-forward="true" selection-start-line="25" selection-start-column="55" selection-end-line="25" selection-end-column="55" />
               <folding>
                 <element signature="e#3260#3261#0" expanded="true" />
                 <element signature="e#3305#3306#0" expanded="true" />
@@ -96,7 +96,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/techweblearn/Main.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="170">
@@ -134,18 +134,18 @@
         <option value="$PROJECT_DIR$/src/com/techweblearn/DownloadingFileStatus.java" />
         <option value="$PROJECT_DIR$/src/com/techweblearn/DownloadListener.java" />
         <option value="$PROJECT_DIR$/src/com/techweblearn/FileDownloadListener.java" />
-        <option value="$PROJECT_DIR$/src/com/techweblearn/DownloadFile.java" />
         <option value="$PROJECT_DIR$/src/com/techweblearn/DownloadingStatus.java" />
         <option value="$PROJECT_DIR$/src/com/techweblearn/Downloader.java" />
         <option value="$PROJECT_DIR$/src/com/techweblearn/Main.java" />
+        <option value="$PROJECT_DIR$/src/com/techweblearn/DownloadFile.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="85" />
-    <option name="y" value="25" />
-    <option name="width" value="1750" />
-    <option name="height" value="970" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="542" />
+    <option name="y" value="241" />
+    <option name="width" value="1364" />
+    <option name="height" value="718" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -294,39 +294,54 @@
       <option name="project" value="LOCAL" />
       <updated>1529903195052</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Adding Multiple File Downloads">
+      <created>1529927331439</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1529927331439</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
+    <frame x="622" y="172" width="1091" height="574" extended-state="0" />
     <layout>
       <window_info anchor="right" id="Palette" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" weight="0.32905984" />
+      <window_info anchor="bottom" id="TODO" order="10" weight="0.32905984" />
+      <window_info anchor="bottom" id="Messages" order="0" weight="0.32905984" />
       <window_info anchor="right" id="Palette&#9;" />
       <window_info id="Image Layers" />
       <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Event Log" order="1" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.28490028" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Terminal" weight="0.32905984" />
+      <window_info anchor="bottom" id="Run" order="6" weight="0.28490028" />
+      <window_info anchor="bottom" id="Version Control" order="2" />
+      <window_info anchor="bottom" id="Terminal" order="3" visible="true" weight="0.5273973" />
       <window_info id="Capture Tool" />
       <window_info id="Designer" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24966443" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.36081475" />
+      <window_info anchor="bottom" id="Find" order="5" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" />
       <window_info anchor="right" id="Theme Preview" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
       <window_info id="Favorites" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
+      <window_info anchor="bottom" id="Message" order="4" />
+      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" id="Palette" order="0" />
@@ -363,7 +378,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Before New Bramch" />
     <MESSAGE value="Added Thread For Combining File" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Thread For Combining File" />
+    <MESSAGE value="Adding Multiple File Downloads" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding Multiple File Downloads" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/com/techweblearn/ExecutorThreadListener.java">
@@ -477,17 +493,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/techweblearn/DownloadFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="63" selection-start-line="63" selection-end-line="63" />
-          <folding>
-            <element signature="e#3260#3261#0" expanded="true" />
-            <element signature="e#3305#3306#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/techweblearn/DownloadingStatus.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -521,6 +526,17 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="87" selection-start-line="10" selection-start-column="87" selection-end-line="10" selection-end-column="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/techweblearn/DownloadFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="53">
+          <caret line="25" column="55" lean-forward="true" selection-start-line="25" selection-start-column="55" selection-end-line="25" selection-end-column="55" />
+          <folding>
+            <element signature="e#3260#3261#0" expanded="true" />
+            <element signature="e#3305#3306#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

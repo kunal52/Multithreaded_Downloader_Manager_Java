@@ -4,9 +4,18 @@ import java.util.ArrayList;
 
 public class DownloadingStatus {
 
-   private long downloaded;
+    private String filename;
+   private long downloaded=0;
    private int noOfParts;
    private ArrayList<Long>individualPartDownloadedStatus;
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
     public long getDownloaded() {
         return downloaded;
@@ -30,5 +39,10 @@ public class DownloadingStatus {
 
     public void setIndividualPartDownloadedStatus(ArrayList<Long> individualPartDownloadedStatus) {
         this.individualPartDownloadedStatus = individualPartDownloadedStatus;
+    }
+
+    public void incrementDownload()
+    {
+        downloaded+=8192;
     }
 }
