@@ -50,7 +50,7 @@ public class DownloadingThread implements Runnable {
     public void run() {
 
         try {
-            URL url=new URL(downloadTask.url);
+            URL url=new URL(downloadTask.getUrl());
             httpURLConnection= (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("Range",downloadTask.getRange());
             httpURLConnection.setConnectTimeout(60000);

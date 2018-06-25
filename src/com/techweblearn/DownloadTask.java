@@ -2,12 +2,13 @@ package com.techweblearn;
 
 public class DownloadTask {
 
-    String url;
+    private String url;
     private long startRange;
     private long endRange;
     private String filename;
-    String savePath;
-    long downloaded=0;
+    private String savePath;
+    private long downloaded=0;
+
 
     public String getFilename() {
         return filename;
