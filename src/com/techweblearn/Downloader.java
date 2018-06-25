@@ -73,7 +73,7 @@ public class Downloader
             downloadingThreadArrayList.add(i,downloadingThread);
             executorService.submit(downloadingThread);
         }
-        executorService.shutdown();
+      //  executorService.shutdown();
 
 
         scheduledExecutorService=Executors.newScheduledThreadPool(1);
@@ -124,10 +124,10 @@ public class Downloader
                 if(downloadListener!=null)
                 downloadListener.onCompleted();
                 scheduledExecutorService.shutdownNow();
-                CombiningPartFiles.combineFiles(new File(fileDownloadInfo.getFileName()), downloadTasks, new CombiningFileListener() {
+                executorService.submit(new CombiningPartFiles(new File(fileDownloadInfo.getFileName()), downloadTasks, new CombiningFileListener() {
                     @Override
                     public void combineCompleted() {
-                        DeleteFiles.delete(downloadTasks);
+
                     }
 
                     @Override
@@ -139,7 +139,7 @@ public class Downloader
                     public void combineError() {
 
                     }
-                });
+                }));
             }
         }
 

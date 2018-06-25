@@ -17,10 +17,22 @@ import java.nio.file.Paths;
 
 import static java.nio.file.StandardOpenOption.*;
 
-public class CombiningPartFiles {
+public class CombiningPartFiles implements Runnable {
 
-    public static void combineFiles(File output, DownloadTask[] downloadTasks, CombiningFileListener combiningFileListener)
-    {
+    private File output;
+    private DownloadTask[] downloadTasks;
+    private CombiningFileListener combiningFileListener;
+
+
+    public CombiningPartFiles(File output, DownloadTask[] downloadTasks, CombiningFileListener combiningFileListener) {
+        this.output = output;
+        this.downloadTasks = downloadTasks;
+        this.combiningFileListener = combiningFileListener;
+    }
+
+
+    @Override
+    public void run() {
         int read;
         int total_read = 0;
 
@@ -39,46 +51,34 @@ public class CombiningPartFiles {
         try(FileChannel outChannel=FileChannel.open(outFile,WRITE,APPEND,CREATE)) {
 
             System.out.println("Combining Files");
-            for(int i=0;i<downloadTasks.length;i++)
-            {
+            for (DownloadTask downloadTask : downloadTasks) {
 
+                Path inFile = Paths.get(downloadTask.getFilename());
+                try (FileChannel inFileChannel = FileChannel.open(inFile, READ)) {
 
-                Path inFile=Paths.get(downloadTasks[i].getFilename());
-                try ( FileChannel inFileChannel=FileChannel.open(inFile,READ)){
-
-                    while (true)
-                    {
+                    while (true) {
                         byteBuffer.clear();
-                        read=inFileChannel.read(byteBuffer);
+                        read = inFileChannel.read(byteBuffer);
                         byteBuffer.flip();
                         outChannel.write(byteBuffer);
-                        if(read==-1)
+                        if (read == -1)
                             break;
-                         total_read+=read;
+                        total_read += read;
 
                     }
-
-
-
 
                 } catch (IOException e) {
                     combiningFileListener.combineError();
                     e.printStackTrace();
                 }
 
-
-
-
             }
-
-
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
+        DeleteFiles.delete(downloadTasks);
         combiningFileListener.combineCompleted();
-
     }
 }
