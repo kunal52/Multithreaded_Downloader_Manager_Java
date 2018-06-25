@@ -1,9 +1,7 @@
 package com.techweblearn;
 
 import java.io.*;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
@@ -15,23 +13,24 @@ public class DownloadingThread implements Runnable {
 
     private static final int BUFFER_SIZE=8192;
 
-    private ByteBuffer byteBuffer;
     private long downloaded=0;
     private boolean pause=false;
     private HttpURLConnection httpURLConnection;
-    private ReadableByteChannel readableByteChannel;
-    private WritableByteChannel writableByteChannel;
     private FileOutputStream fileOutputStream;
     private int responseCode;
-    private BufferedInputStream bufferedInputStream;
+    private static final String MOVED_TEMPORARILY_LOCATION="Location";
+
+    public static final int MOVE_TEMPORARILY=302;
+
     private BufferedOutputStream bufferedOutputStream;
-
-
+    private BufferedInputStream bufferedInputStream;
 
     private DownloadTask downloadTask;
     private int partNo;
+
+    byte[]buffer=new byte[BUFFER_SIZE];
     private PartDownloadListener partDownloadListener;
-    private byte[]buffer=new byte[8192];
+
 
     public DownloadingThread(DownloadTask downloadTask, PartDownloadListener partDownloadListener) {
         this.downloadTask = downloadTask;
@@ -58,37 +57,45 @@ public class DownloadingThread implements Runnable {
             httpURLConnection.setReadTimeout(60000);
             httpURLConnection.connect();
             responseCode=httpURLConnection.getResponseCode();
+
+            if(responseCode==MOVE_TEMPORARILY)
+            {
+                httpURLConnection=handleMoveTemporarily(httpURLConnection);
+            }
+
             System.out.println(httpURLConnection.getHeaderFields().toString());
+
+
             fileOutputStream=new FileOutputStream(new File(downloadTask.getFilename()),true);
+
 
             bufferedInputStream=new BufferedInputStream(httpURLConnection.getInputStream());
             bufferedOutputStream=new BufferedOutputStream(fileOutputStream);
-
             int read;
 
-          //  readableByteChannel=Channels.newChannel(httpURLConnection.getInputStream());
-
-            //writableByteChannel=fileOutputStream.getChannel();
-
-            while (true)
+            while ((read=bufferedInputStream.read(buffer))!=-1)
             {
-               // byteBuffer.clear();
+
+                bufferedOutputStream.write(buffer,0,read);
+
+                //byteBuffer.clear();
                /* if(pause)
                 {
                     break;
                 }*/
 
-                read=bufferedInputStream.read(buffer);
+              //  int read=readableByteChannel.read(byteBuffer);
+             //   byteBuffer.flip();
+              //  writableByteChannel.write(byteBuffer);
 
-                bufferedOutputStream.write(buffer);
-                if(read==-1)
-                    break;
 
-                System.out.println(read);
+
+                /*if(read==-1)
+                    break;*/
 
                 downloaded+=read;
                 if(partDownloadListener!=null)
-                partDownloadListener.update(downloaded,partNo);
+                    partDownloadListener.update(downloaded,partNo);
 
             }
 
@@ -96,14 +103,11 @@ public class DownloadingThread implements Runnable {
 
             bufferedOutputStream.close();
             bufferedInputStream.close();
-            byteBuffer.clear();
             fileOutputStream.close();
-            writableByteChannel.close();
-            readableByteChannel.close();
             httpURLConnection.disconnect();
 
             if(pause)
-            partDownloadListener.pause(partNo,downloaded);
+                partDownloadListener.pause(partNo,downloaded);
             else partDownloadListener.completed(partNo);
 
         }
@@ -131,16 +135,25 @@ public class DownloadingThread implements Runnable {
     {
         pause=true;
         try {
-            byteBuffer.clear();
+            bufferedInputStream.close();
+            bufferedOutputStream.close();
             fileOutputStream.close();
-            writableByteChannel.close();
-            readableByteChannel.close();
             httpURLConnection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private HttpURLConnection handleMoveTemporarily(HttpURLConnection httpURLConnection)
+    {
+        try {
+            URL url=new URL(httpURLConnection.getHeaderField(MOVED_TEMPORARILY_LOCATION));
+            return (HttpURLConnection) url.openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        return null;
     }
 
 }
