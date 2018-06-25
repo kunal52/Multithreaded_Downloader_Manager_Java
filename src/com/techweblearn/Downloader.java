@@ -109,6 +109,7 @@ public class Downloader
         @Override
         public void update(long downloaded,int partNo) {
             Downloader.this.downloaded+=8192;
+            System.out.println(downloaded+"  "+partNo);
             downloadListener.onPartStatus(downloaded,partNo);
 
         }
